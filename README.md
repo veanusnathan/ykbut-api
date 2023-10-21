@@ -45,7 +45,7 @@ $ yarn run start:dev
 $ yarn run start:prod
 ```
 
-Installing PostgreSQL and PGAdmin4
+## Installing PostgreSQL and PGAdmin4
 
 ```bash
 # Docker
