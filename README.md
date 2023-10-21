@@ -54,7 +54,7 @@ Installing PostgreSQL and PGAdmin4
 
 # PostgreSQL and PGAdmin4
 - In the api folder run
-    docker compose up
+    "docker compose up"
       it will install PostgreSQL and PGAdmin4
 
 # PGAdmin4
