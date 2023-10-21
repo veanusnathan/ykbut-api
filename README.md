@@ -75,7 +75,7 @@ Installing PostgreSQL and PGAdmin4
         - got to terminal
         - type "docker ps"
         - find container id of "postgres:13"
-        - type "docker inspect {postgres:13 container id}
+        - type "docker inspect {postgres:13 container id}"
         - find IPAddress at the bottom section
         - paste it in the hostname/address at pgadmin web
 ```
