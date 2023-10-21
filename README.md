@@ -45,17 +45,39 @@ $ yarn run start:dev
 $ yarn run start:prod
 ```
 
-## Test
+Installing PostgreSQL and PGAdmin4
 
 ```bash
-# unit tests
-$ yarn run test
+# Docker
+- install docker
+- login to docker
 
-# e2e tests
-$ yarn run test:e2e
+# PostgreSQL and PGAdmin4
+- In the api folder run
+    docker compose up
+      it will install PostgreSQL and PGAdmin4
 
-# test coverage
-$ yarn run test:cov
+# PGAdmin4
+- Open PGAdmin4 at : localhost:80
+- login with :
+    email : db@dev.id
+    password : admin
+- Create Connection
+  Right click on "Servers" -> Register -> Server
+  Input :
+    General
+      name : ybkut
+    Connection
+      port : 5432
+      username : ybkut
+      password : admin
+      hostname/address :
+        - got to terminal
+        - type "docker ps"
+        - find container id of "postgres:13"
+        - type "docker inspect {postgres:13 container id}
+        - find IPAddress at the bottom section
+        - paste it in the hostname/address at pgadmin web
 ```
 
 ## Support
