@@ -80,6 +80,16 @@ $ yarn run start:prod
         - paste it in the hostname/address at pgadmin web
 ```
 
+## Generate new module with nest/cli
+
+```bash
+# In the api folder open terminal
+  type "nest g module {moduleName}"
+
+nb : you can type "nest g --help" to look what can you generate through nest/cli
+open documentation for more info
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
