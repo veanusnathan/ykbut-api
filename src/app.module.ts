@@ -5,10 +5,11 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { MikroOrmMiddleware, MikroOrmModule } from '@mikro-orm/nestjs';
-import { MikroORM } from '@mikro-orm/postgresql';
+import defineConfig from './mikro-orm.config';
+import { MikroORM } from '@mikro-orm/core';
 
 @Module({
-  imports: [MikroOrmModule.forRoot()],
+  imports: [MikroOrmModule.forRoot(defineConfig)],
 })
 export class AppModule implements NestModule, OnModuleInit {
   constructor(private readonly orm: MikroORM) {}

@@ -1,7 +1,7 @@
-import { Options } from '@mikro-orm/core';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
+import { defineConfig } from '@mikro-orm/postgresql';
 
-const config: Options = {
+export default defineConfig({
   host: 'localhost',
   port: 5432,
   user: 'ybkut',
@@ -16,6 +16,4 @@ const config: Options = {
     pathTs: 'src/migrations',
     disableForeignKeys: false,
   },
-};
-
-export default config;
+});
