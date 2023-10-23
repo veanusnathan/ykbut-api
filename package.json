@@ -17,9 +17,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "mikro-orm": "mikro-orm"
   },
   "dependencies": {
+    "@mikro-orm/cli": "^5.8.10",
     "@mikro-orm/core": "^5.8.10",
     "@mikro-orm/migrations": "^5.8.10",
     "@mikro-orm/nestjs": "^5.2.2",
@@ -75,6 +77,7 @@
     "testEnvironment": "node"
   },
   "mikro-orm": {
+    "useTsNode": true,
     "configPaths": [
       "./src/mikro-orm.config.ts",
       "./dist/src/mikro-orm.config.js"
