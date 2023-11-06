@@ -10,12 +10,3 @@ services:
       POSTGRES_USER: ybkut
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: ybkut-db
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: db@dev.id
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - 80:80
