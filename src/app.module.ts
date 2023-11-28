@@ -7,9 +7,10 @@ import {
 import { MikroOrmMiddleware, MikroOrmModule } from '@mikro-orm/nestjs';
 import defineConfig from './mikro-orm.config';
 import { MikroORM } from '@mikro-orm/core';
+import { TestModule } from './test/test.module';
 
 @Module({
-  imports: [MikroOrmModule.forRoot(defineConfig)],
+  imports: [MikroOrmModule.forRoot(defineConfig), TestModule],
 })
 export class AppModule implements NestModule, OnModuleInit {
   constructor(private readonly orm: MikroORM) {}
