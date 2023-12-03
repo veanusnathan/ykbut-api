@@ -60,20 +60,37 @@ export class PurchaseService {
     return parsedLeadTimeToPurchase[0];
   }
 
-  public async getTotalPurchaseOrders(): Promise<{ days: number }> {
-    const leadTimeToPurchase = await this.connectionService.getConnection({
+  public async getTotalPurchaseOrders(): Promise<{ sum: number }> {
+    const totalPurchaseOrders = await this.connectionService.getConnection({
       rawQuery:
-        "SELECT AVG(extract(epoch from age(po.date_approve,po.create_date)/(24*60*60)::decimal(16,2))) as Days FROM purchase_order po JOIN res_company comp ON (po.company_id = comp.id) JOIN res_currency curr ON (comp.currency_id = curr.id) WHERE po.state in ('purchase', 'done')",
+        "select count(id) from purchase_order where state in ('done','purchase')",
     });
 
-    const parsedLeadTimeToPurchase = leadTimeToPurchase.map(
-      ({ days }: { days: string }) => {
+    const parsedTotalPurchaseOrders = totalPurchaseOrders.map(
+      ({ count }: { count: string }) => {
         return {
-          sum: Number(days),
+          sum: Number(count),
         };
       },
     );
 
-    return parsedLeadTimeToPurchase[0];
+    return parsedTotalPurchaseOrders[0];
+  }
+
+  public async getToApprovePurchase(): Promise<{ sum: number }> {
+    const toApprovePurchase = await this.connectionService.getConnection({
+      rawQuery:
+        "select count(id) from purchase_order where state = 'to_approve'",
+    });
+
+    const parsedToApprovePurchase = toApprovePurchase.map(
+      ({ count }: { count: string }) => {
+        return {
+          sum: Number(count),
+        };
+      },
+    );
+
+    return parsedToApprovePurchase[0];
   }
 }

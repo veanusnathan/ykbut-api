@@ -5,7 +5,7 @@ import { PurchaseService } from './purchase.service';
 export class PurchaseController {
   constructor(private readonly purchaseService: PurchaseService) {}
 
-  @Get('/total-orders')
+  @Get('/total-amount-orders')
   async getTotalAmountPurchaseOrders() {
     const stocksOpnames =
       await this.purchaseService.getTotalAmountPurchaseOrder();
@@ -28,10 +28,18 @@ export class PurchaseController {
     return leadTimeToPurchase;
   }
 
-  @Get('/sum-orders')
+  @Get('/total-orders')
   async getTotalPurchaseOrders() {
     const totalPurchaseOrders =
-      await this.purchaseService.getLeadTimeToPurchase();
+      await this.purchaseService.getTotalPurchaseOrders();
+
+    return totalPurchaseOrders;
+  }
+
+  @Get('/approve')
+  async getToApprovePurchase() {
+    const totalPurchaseOrders =
+      await this.purchaseService.getToApprovePurchase();
 
     return totalPurchaseOrders;
   }
