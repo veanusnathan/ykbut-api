@@ -9,9 +9,15 @@ import defineConfig from './mikro-orm.config';
 import { MikroORM } from '@mikro-orm/core';
 import { TestModule } from './test/test.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { PurchaseModule } from './purchase/purchase.module';
 
 @Module({
-  imports: [MikroOrmModule.forRoot(defineConfig), TestModule, InventoryModule],
+  imports: [
+    MikroOrmModule.forRoot(defineConfig),
+    TestModule,
+    InventoryModule,
+    PurchaseModule,
+  ],
 })
 export class AppModule implements NestModule, OnModuleInit {
   constructor(private readonly orm: MikroORM) {}
