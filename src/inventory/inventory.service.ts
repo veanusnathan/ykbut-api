@@ -12,12 +12,14 @@ import { PaginationService } from '~/pagination/pagination.service';
 import { CurrentStockDTO } from './dtos/current-stock.dto';
 import { TotalVariantDTO } from './dtos/total-variant.dto';
 import { ProductScrapDTO } from './dtos/product-scrap.dto';
+import { ConnectionService } from '~/connection/connection.service';
 
 @Injectable()
 export class InventoryService {
   constructor(
     private readonly em: EntityManager,
     private readonly paginationService: PaginationService,
+    private readonly connectionService: ConnectionService,
   ) {}
 
   public async getStocksOpname(
@@ -62,17 +64,18 @@ export class InventoryService {
   }
 
   public async getTotalProducts(): Promise<{ totalProducts: number }> {
-    const connection = this.em.getConnection();
-
-    const totalProduct = await connection.execute(
-      "select count(name) as product from product_template where type = 'product'",
-    );
-
-    const parsedTotalProduct = totalProduct.map((val: any) => {
-      return {
-        totalProducts: Number(val.product),
-      };
+    const totalProduct = await this.connectionService.getConnection({
+      rawQuery:
+        "select count(name) as product from product_template where type = 'product'",
     });
+
+    const parsedTotalProduct = totalProduct.map(
+      ({ product }: { product: string }) => {
+        return {
+          totalProducts: Number(product),
+        };
+      },
+    );
 
     return parsedTotalProduct[0];
   }
@@ -194,11 +197,10 @@ export class InventoryService {
   }
 
   public async getTotalInventoryValue(): Promise<{ totalValues: number }> {
-    const connection = this.em.getConnection();
-
-    const value = await connection.execute(
-      "select sum(stl.value) as product from stock_valuation_layer stl, product_template pt where pt.type='product' and stl.product_id=pt.id",
-    );
+    const value = await this.connectionService.getConnection({
+      rawQuery:
+        "select sum(stl.value) as product from stock_valuation_layer stl, product_template pt where pt.type='product' and stl.product_id=pt.id",
+    });
 
     const parsedValue = value.map(({ product }: { product: string }) => {
       return {
@@ -210,11 +212,10 @@ export class InventoryService {
   }
 
   public async getPendingTransfers(): Promise<{ pendingTransfers: number }> {
-    const connection = this.em.getConnection();
-
-    const pendingTransfers = await connection.execute(
-      "select count(sp.id) as pending_transfer from stock_picking sp, stock_picking_type spt where state='draft' and not spt.code='incoming'",
-    );
+    const pendingTransfers = await this.connectionService.getConnection({
+      rawQuery:
+        "select count(sp.id) as pending_transfer from stock_picking sp, stock_picking_type spt where state='draft' and not spt.code='incoming'",
+    });
 
     const parsedValue = pendingTransfers.map(
       ({ pending_transfer }: { pending_transfer: string }) => {
@@ -228,11 +229,10 @@ export class InventoryService {
   }
 
   public async getPendingReceipts(): Promise<{ pendingReceipts: number }> {
-    const connection = this.em.getConnection();
-
-    const pendingTransfers = await connection.execute(
-      "select count(sp.id) as pending_transfer from stock_picking sp, stock_picking_type spt where state='cancel' and not spt.code='incoming'",
-    );
+    const pendingTransfers = await this.connectionService.getConnection({
+      rawQuery:
+        "select count(sp.id) as pending_transfer from stock_picking sp, stock_picking_type spt where state='cancel' and not spt.code='incoming'",
+    });
 
     const parsedValue = pendingTransfers.map(
       ({ pending_transfer }: { pending_transfer: string }) => {
