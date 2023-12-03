@@ -227,7 +227,7 @@ export class InventoryService {
     return parsedValue[0];
   }
 
-  public async getPendingReceipts(): Promise<{ product: number }> {
+  public async getPendingReceipts(): Promise<{ pendingReceipts: number }> {
     const connection = this.em.getConnection();
 
     const pendingTransfers = await connection.execute(
