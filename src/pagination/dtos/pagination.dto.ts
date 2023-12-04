@@ -5,10 +5,10 @@ export class PaginationQueryParams {
   @IsNumber()
   @IsOptional()
   @Transform(({ value }) => parseInt(value))
-  readonly limit: number;
+  readonly limit: number = 10;
 
   @IsNumber()
   @IsOptional()
   @Transform(({ value }) => parseInt(value))
-  readonly page: number;
+  readonly page: number = 1;
 }

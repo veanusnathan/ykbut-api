@@ -1,4 +1,4 @@
 import { EntityRepository } from '@mikro-orm/postgresql';
-import { Test } from '@nestjs/testing';
+import { Test } from './test.entity';
 
 export class TestRepository extends EntityRepository<Test> {}

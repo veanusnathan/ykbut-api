@@ -10,6 +10,7 @@ import { MikroORM } from '@mikro-orm/core';
 import { TestModule } from './test/test.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { PurchaseModule } from './purchase/purchase.module';
+import { AssetsModule } from './dashboardAssets/assets.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PurchaseModule } from './purchase/purchase.module';
     TestModule,
     InventoryModule,
     PurchaseModule,
+    AssetsModule,
   ],
 })
 export class AppModule implements NestModule, OnModuleInit {
