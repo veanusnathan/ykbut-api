@@ -11,4 +11,25 @@ export class SchoolController {
 
     return schoolLocations;
   }
+
+  @Get('/graduate')
+  async getSchoolGraduate() {
+    const schoolGraduate = await this.schoolService.getSchoolGraduate();
+
+    return schoolGraduate;
+  }
+
+  @Get('/student')
+  async getSchoolStudent() {
+    const schoolStudent = await this.schoolService.getSchoolStudent();
+
+    return schoolStudent;
+  }
+
+  @Get('/sales')
+  async getSchoolSales() {
+    const schoolSales = await this.schoolService.getSchoolSales();
+
+    return schoolSales;
+  }
 }

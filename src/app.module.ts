@@ -12,6 +12,7 @@ import { InventoryModule } from './inventory/inventory.module';
 import { PurchaseModule } from './purchase/purchase.module';
 import { AssetsModule } from './dashboardAssets/assets.module';
 import { SchoolModule } from './school/school.module';
+import { AcademicModule } from './academic/academic.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SchoolModule } from './school/school.module';
     PurchaseModule,
     AssetsModule,
     SchoolModule,
+    AcademicModule,
   ],
 })
 export class AppModule implements NestModule, OnModuleInit {
