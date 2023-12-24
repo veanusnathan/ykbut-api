@@ -3,8 +3,12 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import {
   CurrentStock,
   ProductScrap,
+  TotalProductsDetail,
   StockOpname,
   TotalVariant,
+  TotalInventoryValueDetail,
+  PendingReceiptDetail,
+  PendingTransferDetail,
 } from './inventory.entity';
 import { InventoryService } from './inventory.service';
 import { InventoryController } from './inventory.controller';
@@ -14,7 +18,16 @@ import { ConnectionModule } from '~/connection/connection.module';
 @Module({
   imports: [
     MikroOrmModule.forFeature({
-      entities: [StockOpname, CurrentStock, TotalVariant, ProductScrap],
+      entities: [
+        StockOpname,
+        CurrentStock,
+        TotalVariant,
+        ProductScrap,
+        TotalProductsDetail,
+        TotalInventoryValueDetail,
+        PendingReceiptDetail,
+        PendingTransferDetail,
+      ],
     }),
     PaginationModule,
     ConnectionModule,
