@@ -4,6 +4,10 @@ import { StockOpnameDTO } from './dtos/stock-opname.dto';
 import { CurrentStockDTO } from './dtos/current-stock.dto';
 import { TotalVariantDTO } from './dtos/total-variant.dto';
 import { ProductScrapDTO } from './dtos/product-scrap.dto';
+import { TotalProductsDetailDTO } from './dtos/product-total-details.dto';
+import { TotalInventoryValueDetailDTO } from './dtos/total-inventory-value-detail.dto';
+import { PendingTransferDetailDTO } from './dtos/pending-transfer-detail.dto';
+import { PendingReceiptDetailDTO } from './dtos/pending-receipt-detail.dto';
 
 @Controller('/inventory')
 export class InventoryController {
@@ -45,8 +49,8 @@ export class InventoryController {
   }
 
   @Get('/total-values')
-  async getTotalInventoryValue() {
-    const totalValues = await this.inventoryService.getTotalInventoryValue();
+  async getTotalInventoryValues() {
+    const totalValues = await this.inventoryService.getTotalInventoryValues();
 
     return totalValues;
   }
@@ -63,5 +67,39 @@ export class InventoryController {
     const totalValues = await this.inventoryService.getPendingReceipts();
 
     return totalValues;
+  }
+
+  @Get('/total-products-detail')
+  async getTotalProductsDetail(@Query() query: TotalProductsDetailDTO) {
+    const totalProducts =
+      await this.inventoryService.getTotalProductsDetail(query);
+
+    return totalProducts;
+  }
+
+  @Get('/total-values-detail')
+  async getTotalInventoryValuesDetail(
+    @Query() query: TotalInventoryValueDetailDTO,
+  ) {
+    const totalProducts =
+      await this.inventoryService.getTotalInventoryValuesDetail(query);
+
+    return totalProducts;
+  }
+
+  @Get('/pending-transfer-detail')
+  async getPendingTransferDetail(@Query() query: PendingTransferDetailDTO) {
+    const totalProducts =
+      await this.inventoryService.getPendingTransferDetail(query);
+
+    return totalProducts;
+  }
+
+  @Get('/pending-receipt-detail')
+  async getPendingReceiptDetail(@Query() query: PendingReceiptDetailDTO) {
+    const totalProducts =
+      await this.inventoryService.getPendingReceiptDetail(query);
+
+    return totalProducts;
   }
 }
