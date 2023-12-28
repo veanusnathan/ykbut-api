@@ -6,25 +6,48 @@ import { GeneralDTO } from './dtos/general.dto';
 export class AssetsController {
   constructor(private readonly assetsService: AssetsService) {}
 
-  @Get('/pending-order')
+  @Get('/total-pending-order')
   async getTotalPendingOrder() {
     const pendingOrder = this.assetsService.getTotalPendingOrder();
 
     return pendingOrder;
   }
 
-  @Get('/pending-request')
+  @Get('/purchase-order-list')
+  async getPurchaseOrderList(@Query() query: GeneralDTO) {
+    const purchaseOrderList = this.assetsService.getPurchaseOrderList(query);
+
+    return purchaseOrderList;
+  }
+
+  @Get('/purchase-request')
   async getTotalPendingRequest() {
-    const pendingRequest = this.assetsService.getTotalPendingRequest();
+    const pendingRequest = this.assetsService.getTotalPurchaseRequest();
 
     return pendingRequest;
   }
 
-  @Get('/pending-received')
+  @Get('/purchase-request-list')
+  async getPurchaseRequestList(@Query() query: GeneralDTO) {
+    const purchaseReuqestList =
+      this.assetsService.getPurchaseRequestList(query);
+
+    return purchaseReuqestList;
+  }
+
+  @Get('/purchase-received')
   async getTotalPendingReceived() {
-    const pendingRecaived = this.assetsService.getTotalPendingReceived();
+    const pendingRecaived = this.assetsService.getTotalPurchaseReceived();
 
     return pendingRecaived;
+  }
+
+  @Get('/purchase-received-list')
+  async getPurchaseReceivedList(@Query() query: GeneralDTO) {
+    const purchaseReceivedList =
+      this.assetsService.getTotalEquipmentList(query);
+
+    return purchaseReceivedList;
   }
 
   @Get('/quantity-per-category')
@@ -48,6 +71,13 @@ export class AssetsController {
     return totalEquipment;
   }
 
+  @Get('/total-equipment-list')
+  async getTotalEquipmentList(@Query() query: GeneralDTO) {
+    const totalEquipmentList = this.assetsService.getTotalEquipmentList(query);
+
+    return totalEquipmentList;
+  }
+
   @Get('/total-asset')
   async getTotalAsset() {
     const totalAsset = this.assetsService.getTotalAsset();
@@ -55,7 +85,14 @@ export class AssetsController {
     return totalAsset;
   }
 
-  @Get('/running-depresiation')
+  @Get('/total-asset-list')
+  async getTotalAssetList(@Query() query: GeneralDTO) {
+    const totalAssetList = this.assetsService.getTotalAssetList(query);
+
+    return totalAssetList;
+  }
+
+  @Get('/running-depreciation')
   async getTotalRunningDepresiation() {
     const totalRunningDepresiation =
       this.assetsService.getTotalRunningDepresiation();
@@ -63,11 +100,25 @@ export class AssetsController {
     return totalRunningDepresiation;
   }
 
+  @Get('/running-depreciation-list')
+  async getRunningDepreciationList(@Query() query: GeneralDTO) {
+    const totalAssetList = this.assetsService.getRunningDepreciationList(query);
+
+    return totalAssetList;
+  }
+
   @Get('/done-depresiation')
   async getTotalDoneDepresiation() {
     const totalDoneDepresiation = this.assetsService.getTotalDoneDepresiation();
 
     return totalDoneDepresiation;
+  }
+
+  @Get('/done-depreciation-list')
+  async getDoneDepreciationList(@Query() query: GeneralDTO) {
+    const totalAssetList = this.assetsService.getDoneDepreciationList(query);
+
+    return totalAssetList;
   }
 
   @Get('/pending-depresiation')
@@ -78,11 +129,25 @@ export class AssetsController {
     return totalPendingDepresiation;
   }
 
+  @Get('/pending-depreciation-list')
+  async getPendingDepreciationList(@Query() query: GeneralDTO) {
+    const totalAssetList = this.assetsService.getPendingDepreciationList(query);
+
+    return totalAssetList;
+  }
+
   @Get('/scrap-product')
   async getTotalScrapProduct() {
     const totalScrapProduct = this.assetsService.getTotalScrapProduct();
 
     return totalScrapProduct;
+  }
+
+  @Get('/scrap-product-list')
+  async getScrapProdductList(@Query() query: GeneralDTO) {
+    const totalAssetList = this.assetsService.getScrapProductList(query);
+
+    return totalAssetList;
   }
 
   @Get('/list-item-depresiation')

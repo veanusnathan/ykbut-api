@@ -10,7 +10,7 @@ import { MikroORM } from '@mikro-orm/core';
 import { TestModule } from './test/test.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { PurchaseModule } from './purchase/purchase.module';
-import { AssetsModule } from './dashboardAssets/assets.module';
+import { AssetsModule } from './assets/assets.module';
 import { SchoolModule } from './school/school.module';
 import { AcademicModule } from './academic/academic.module';
 

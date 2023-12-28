@@ -4,8 +4,14 @@ import { PaginationService } from '~/pagination/pagination.service';
 import { ConnectionService } from '~/connection/connection.service';
 import {
   ListItemDepreciation,
+  PurchaseOrderList,
+  PurchaseReceivedList,
+  PurchaseRequestList,
   QuantityPerAmount,
   QuantityPerCategory,
+  ScrapProductList,
+  TotalAssetList,
+  TotalEquipmentList,
 } from './assets.entity';
 import { PaginationResponse } from '~/pagination/types';
 import { GeneralDTO } from './dtos/general.dto';
@@ -35,7 +41,36 @@ export class AssetsService {
     return parsedValue[0];
   }
 
-  public async getTotalPendingRequest(): Promise<any> {
+  public async getPurchaseOrderList(
+    purchaseOrderListDTO: GeneralDTO,
+  ): Promise<PaginationResponse<PurchaseOrderList>> {
+    const { limit = 10, page = 1, search } = purchaseOrderListDTO;
+
+    let whereClause: FilterQuery<PurchaseOrderList> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [{ name: { $ilike: `${search}` } }],
+      };
+    }
+
+    const [pendingOrderList, count] = await this.em.findAndCount(
+      PurchaseOrderList,
+      { ...whereClause },
+      {
+        offset: (page - 1) * limit,
+        limit,
+      },
+    );
+
+    return {
+      data: pendingOrderList,
+      meta: this.paginationService.generateMeta(page, limit, count),
+    };
+  }
+
+  public async getTotalPurchaseRequest(): Promise<any> {
     const pendingRequest = await this.connectionService.getConnection({
       rawQuery:
         "select count(pr.id) as total_pending_request from purchase_request pr where request_type='replacement' and state in ('draft','to_approve')",
@@ -52,7 +87,36 @@ export class AssetsService {
     return parsedValue[0];
   }
 
-  public async getTotalPendingReceived(): Promise<any> {
+  public async getPurchaseRequestList(
+    purchaseRequestListDTO: GeneralDTO,
+  ): Promise<PaginationResponse<PurchaseRequestList>> {
+    const { limit = 10, page = 1, search } = purchaseRequestListDTO;
+
+    let whereClause: FilterQuery<PurchaseRequestList> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [{ name: { $ilike: `${search}` } }],
+      };
+    }
+
+    const [purchaseRequestList, count] = await this.em.findAndCount(
+      PurchaseRequestList,
+      { ...whereClause },
+      {
+        offset: (page - 1) * limit,
+        limit,
+      },
+    );
+
+    return {
+      data: purchaseRequestList,
+      meta: this.paginationService.generateMeta(page, limit, count),
+    };
+  }
+
+  public async getTotalPurchaseReceived(): Promise<any> {
     const pendingReceived = await this.connectionService.getConnection({
       rawQuery:
         "select count(po.id) as total_pending_received from purchase_order po where state not in ('cancel','done')",
@@ -69,6 +133,209 @@ export class AssetsService {
     return parsedValue[0];
   }
 
+  public async getPurchaseReceivedList(
+    purchaseReceivedListDTO: GeneralDTO,
+  ): Promise<PaginationResponse<PurchaseReceivedList>> {
+    const { limit = 10, page = 1, search } = purchaseReceivedListDTO;
+
+    let whereClause: FilterQuery<PurchaseReceivedList> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [{ name: { $ilike: `${search}` } }],
+      };
+    }
+
+    const [purchaseRequestList, count] = await this.em.findAndCount(
+      PurchaseReceivedList,
+      { ...whereClause },
+      {
+        offset: (page - 1) * limit,
+        limit,
+      },
+    );
+
+    return {
+      data: purchaseRequestList,
+      meta: this.paginationService.generateMeta(page, limit, count),
+    };
+  }
+
+  public async getTotalEquipmentList(
+    totalEquipmentListDTO: GeneralDTO,
+  ): Promise<PaginationResponse<TotalEquipmentList>> {
+    const { limit = 10, page = 1, search } = totalEquipmentListDTO;
+
+    let whereClause: FilterQuery<TotalEquipmentList> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [{ name: { $ilike: `${search}` } }],
+      };
+    }
+
+    const [totalEquipmentList, count] = await this.em.findAndCount(
+      TotalEquipmentList,
+      { ...whereClause },
+      {
+        offset: (page - 1) * limit,
+        limit,
+      },
+    );
+
+    return {
+      data: totalEquipmentList,
+      meta: this.paginationService.generateMeta(page, limit, count),
+    };
+  }
+
+  public async getTotalAssetList(
+    totalEquipmentListDTO: GeneralDTO,
+  ): Promise<PaginationResponse<TotalAssetList>> {
+    const { limit = 10, page = 1, search } = totalEquipmentListDTO;
+
+    let whereClause: FilterQuery<TotalAssetList> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [{ name: { $ilike: `${search}` } }],
+      };
+    }
+
+    const [totalAssetList, count] = await this.em.findAndCount(
+      TotalAssetList,
+      { ...whereClause },
+      {
+        offset: (page - 1) * limit,
+        limit,
+      },
+    );
+
+    return {
+      data: totalAssetList,
+      meta: this.paginationService.generateMeta(page, limit, count),
+    };
+  }
+
+  public async getRunningDepreciationList(
+    runningDepreciationListDTO: GeneralDTO,
+  ): Promise<PaginationResponse<TotalAssetList>> {
+    const { limit = 10, page = 1, search } = runningDepreciationListDTO;
+
+    let whereClause: FilterQuery<TotalAssetList> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [{ name: { $ilike: `${search}` } }],
+      };
+    }
+
+    const [totalAssetList, count] = await this.em.findAndCount(
+      TotalAssetList,
+      { ...whereClause, state: 'open' },
+      {
+        offset: (page - 1) * limit,
+        limit,
+      },
+    );
+
+    return {
+      data: totalAssetList,
+      meta: this.paginationService.generateMeta(page, limit, count),
+    };
+  }
+
+  public async getDoneDepreciationList(
+    runningDepreciationListDTO: GeneralDTO,
+  ): Promise<PaginationResponse<TotalAssetList>> {
+    const { limit = 10, page = 1, search } = runningDepreciationListDTO;
+
+    let whereClause: FilterQuery<TotalAssetList> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [{ name: { $ilike: `${search}` } }],
+      };
+    }
+
+    const [totalAssetList, count] = await this.em.findAndCount(
+      TotalAssetList,
+      { ...whereClause, state: 'close' },
+      {
+        offset: (page - 1) * limit,
+        limit,
+      },
+    );
+
+    return {
+      data: totalAssetList,
+      meta: this.paginationService.generateMeta(page, limit, count),
+    };
+  }
+
+  public async getPendingDepreciationList(
+    runningDepreciationListDTO: GeneralDTO,
+  ): Promise<PaginationResponse<TotalAssetList>> {
+    const { limit = 10, page = 1, search } = runningDepreciationListDTO;
+
+    let whereClause: FilterQuery<TotalAssetList> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [{ name: { $ilike: `${search}` } }],
+      };
+    }
+
+    const [totalAssetList, count] = await this.em.findAndCount(
+      TotalAssetList,
+      { ...whereClause, state: 'draft' },
+      {
+        offset: (page - 1) * limit,
+        limit,
+      },
+    );
+
+    return {
+      data: totalAssetList,
+      meta: this.paginationService.generateMeta(page, limit, count),
+    };
+  }
+
+  public async getScrapProductList(
+    runningDepreciationListDTO: GeneralDTO,
+  ): Promise<PaginationResponse<ScrapProductList>> {
+    const { limit = 10, page = 1, search } = runningDepreciationListDTO;
+
+    let whereClause: FilterQuery<ScrapProductList> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [{ name: { $ilike: `${search}` } }],
+      };
+    }
+
+    const [totalAssetList, count] = await this.em.findAndCount(
+      ScrapProductList,
+      { ...whereClause },
+      {
+        offset: (page - 1) * limit,
+        limit,
+      },
+    );
+
+    return {
+      data: totalAssetList,
+      meta: this.paginationService.generateMeta(page, limit, count),
+    };
+  }
+
   // if this used in a chart
 
   public async getQuantityPerCategory(): Promise<any> {
@@ -82,7 +349,7 @@ export class AssetsService {
   // public async getQuantityPerCategory(
   //   quantityPerCategoryDTO: QuantityPerCategoryDTO,
   // ): Promise<PaginationResponse<QuantityPerCategory>> {
-  //   const { limit, page, sortBy, sortOrder, search } = quantityPerCategoryDTO;
+  //   const { limit = 10, page = 1, sortBy, sortOrder, search } = quantityPerCategoryDTO;
 
   //   let whereClause: FilterQuery<QuantityPerCategory> = {};
 
@@ -229,7 +496,7 @@ export class AssetsService {
   public async getListItemDepresiation(
     quantityPerCategoryDTO: GeneralDTO,
   ): Promise<PaginationResponse<ListItemDepreciation>> {
-    const { limit, page, sortOrder, search } = quantityPerCategoryDTO;
+    const { limit = 10, page = 1, search } = quantityPerCategoryDTO;
 
     let whereClause: FilterQuery<ListItemDepreciation> = {};
 
