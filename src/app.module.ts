@@ -13,6 +13,7 @@ import { PurchaseModule } from './purchase/purchase.module';
 import { AssetsModule } from './assets/assets.module';
 import { SchoolModule } from './school/school.module';
 import { AcademicModule } from './academic/academic.module';
+import { LoggerMiddleware } from './logger.middleware';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ export class AppModule implements NestModule, OnModuleInit {
   }
 
   configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
     consumer.apply(MikroOrmMiddleware).forRoutes('*');
   }
 }
