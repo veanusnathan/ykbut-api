@@ -53,11 +53,11 @@ export class InventoryService {
       };
     }
 
-    const [stocksOpname, count] = await this.em.findAndCount(
+    const stockOpname = await this.em.find(
       StockOpname,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
         orderBy: {
           [sortBy]: sortOrder,
@@ -65,9 +65,15 @@ export class InventoryService {
       },
     );
 
+    const count = await this.em.find(StockOpname, {});
+
     return {
-      data: stocksOpname,
-      meta: this.paginationService.generateMeta(page, limit, count),
+      data: stockOpname,
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
     };
   }
 
@@ -111,11 +117,11 @@ export class InventoryService {
       };
     }
 
-    const [currentStock, count] = await this.em.findAndCount(
+    const currentStock = await this.em.find(
       CurrentStock,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
         orderBy: {
           [sortBy]: sortOrder,
@@ -123,9 +129,15 @@ export class InventoryService {
       },
     );
 
+    const count = await this.em.find(CurrentStock, {});
+
     return {
       data: currentStock,
-      meta: this.paginationService.generateMeta(page, limit, count),
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
     };
   }
 
@@ -146,11 +158,11 @@ export class InventoryService {
       whereClause.name = { $ilike: `${search}` };
     }
 
-    const [totalVariant, count] = await this.em.findAndCount(
+    const totalVariant = await this.em.find(
       TotalVariant,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
         orderBy: {
           [sortBy]: sortOrder,
@@ -158,9 +170,15 @@ export class InventoryService {
       },
     );
 
+    const count = await this.em.find(TotalVariant, {});
+
     return {
       data: totalVariant,
-      meta: this.paginationService.generateMeta(page, limit, count),
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
     };
   }
 
@@ -186,11 +204,11 @@ export class InventoryService {
       whereClause.state = state;
     }
 
-    const [productScrap, count] = await this.em.findAndCount(
+    const productScrap = await this.em.find(
       ProductScrap,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
         orderBy: {
           [sortBy]: sortOrder,
@@ -198,9 +216,15 @@ export class InventoryService {
       },
     );
 
+    const count = await this.em.find(ProductScrap, {});
+
     return {
       data: productScrap,
-      meta: this.paginationService.generateMeta(page, limit, count),
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
     };
   }
 
@@ -263,7 +287,9 @@ export class InventoryService {
       sortOrder = SortOrder.ASC,
       search,
     } = totalProductsDetailDTO;
+
     let whereClause: FilterQuery<TotalProductsDetail> = {};
+
     if (search) {
       whereClause = {
         ...whereClause,
@@ -273,20 +299,28 @@ export class InventoryService {
         ],
       };
     }
-    const [totalProductsDetail, count] = await this.em.findAndCount(
+
+    const totalProductsDetail = await this.em.find(
       TotalProductsDetail,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
         orderBy: {
           [sortBy]: sortOrder,
         },
       },
     );
+
+    const count = await this.em.find(TotalProductsDetail, {});
+
     return {
       data: totalProductsDetail,
-      meta: this.paginationService.generateMeta(page, limit, count),
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
     };
   }
 
@@ -311,11 +345,12 @@ export class InventoryService {
         ],
       };
     }
-    const [totalInventoryValueDetail, count] = await this.em.findAndCount(
+
+    const totalInventoryValueDetail = await this.em.find(
       TotalInventoryValueDetail,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
         orderBy: {
           [sortBy]: sortOrder,
@@ -323,9 +358,15 @@ export class InventoryService {
       },
     );
 
+    const count = await this.em.find(TotalInventoryValueDetail, {});
+
     return {
       data: totalInventoryValueDetail,
-      meta: this.paginationService.generateMeta(page, limit, count),
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
     };
   }
 
@@ -370,11 +411,11 @@ export class InventoryService {
       };
     }
 
-    const [pendingTransferDetail, count] = await this.em.findAndCount(
+    const pendingTransferDetail = await this.em.find(
       PendingTransferDetail,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
         orderBy: {
           [sortBy]: sortOrder,
@@ -382,9 +423,15 @@ export class InventoryService {
       },
     );
 
+    const count = await this.em.find(PendingTransferDetail, {});
+
     return {
       data: pendingTransferDetail,
-      meta: this.paginationService.generateMeta(page, limit, count),
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
     };
   }
 
@@ -429,11 +476,11 @@ export class InventoryService {
       };
     }
 
-    const [pendingReceiptDetail, count] = await this.em.findAndCount(
+    const pendingReceiptDetail = await this.em.find(
       PendingReceiptDetail,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
         orderBy: {
           [sortBy]: sortOrder,
@@ -441,9 +488,15 @@ export class InventoryService {
       },
     );
 
+    const count = await this.em.find(PendingReceiptDetail, {});
+
     return {
       data: pendingReceiptDetail,
-      meta: this.paginationService.generateMeta(page, limit, count),
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
     };
   }
 }

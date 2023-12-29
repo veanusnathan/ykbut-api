@@ -1,7 +1,18 @@
-import { EntityManager } from '@mikro-orm/core';
+import { EntityManager, FilterQuery } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 import { ConnectionService } from '~/connection/connection.service';
 import { PaginationService } from '~/pagination/pagination.service';
+import {
+  TotalDonePurchaseOrder,
+  TotalPurchaseOrderDetail,
+  TotalRfqDetail,
+  TotalToApproveDetail,
+} from './purchase.entity';
+import { TotalPurchaseOrderDetailDTO } from './dtos/total-purchase-order-detail.dto';
+import { PaginationResponse, SortOrder } from '~/pagination/types';
+import { TotalRfqDetailDTO } from './dtos/total-rfq-detail.dto';
+import { TotalDonePurchaseOrderDetailDTO } from './dtos/total-done-purchase-order-detail.dto';
+import { TotalToApproveDetailDTO } from './dtos/total-to-approve-detail.dto';
 
 @Injectable()
 export class PurchaseService {
@@ -62,8 +73,7 @@ export class PurchaseService {
 
   public async getTotalPurchaseOrders(): Promise<{ sum: number }> {
     const totalPurchaseOrders = await this.connectionService.getConnection({
-      rawQuery:
-        "select count(id) from purchase_order where state in ('done','purchase')",
+      rawQuery: "select count(id) from purchase_order where state in ('done')",
     });
 
     const parsedTotalPurchaseOrders = totalPurchaseOrders.map(
@@ -77,7 +87,7 @@ export class PurchaseService {
     return parsedTotalPurchaseOrders[0];
   }
 
-  public async getToApprovePurchase(): Promise<{ sum: number }> {
+  public async getToApprovePurchases(): Promise<{ sum: number }> {
     const toApprovePurchase = await this.connectionService.getConnection({
       rawQuery:
         "select count(id) from purchase_order where state = 'to_approve'",
@@ -92,5 +102,225 @@ export class PurchaseService {
     );
 
     return parsedToApprovePurchase[0];
+  }
+
+  public async getTotalPurchasesOrderDetail(
+    totalPurchaseOrderDetailDTO: TotalPurchaseOrderDetailDTO,
+  ): Promise<PaginationResponse<TotalPurchaseOrderDetail>> {
+    const {
+      limit = 10,
+      page = 1,
+      sortBy = 'purchaseOrderName',
+      sortOrder = SortOrder.ASC,
+      search,
+      state,
+    } = totalPurchaseOrderDetailDTO;
+
+    let whereClause: FilterQuery<TotalPurchaseOrderDetail> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [
+          { partnerName: { $ilike: `%${search}%` } },
+          { purchaseOrderName: { $ilike: `%${search}%` } },
+        ],
+      };
+    }
+
+    if (state) {
+      whereClause = {
+        ...whereClause,
+        state: { $eq: state },
+      };
+    }
+
+    const totalPurchaseOrderDetail = await this.em.find(
+      TotalPurchaseOrderDetail,
+      { ...whereClause },
+      {
+        offset: (Number(page) - 1) * Number(limit),
+        limit,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+      },
+    );
+
+    const count = await this.em.find(TotalPurchaseOrderDetail, {});
+
+    return {
+      data: totalPurchaseOrderDetail,
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
+    };
+  }
+
+  public async getTotalRfqDetail(
+    totalRfqDetailDTO: TotalRfqDetailDTO,
+  ): Promise<PaginationResponse<TotalRfqDetail>> {
+    const {
+      limit = 10,
+      page = 1,
+      sortBy = 'purchaseOrderName',
+      sortOrder = SortOrder.ASC,
+      search,
+      state,
+    } = totalRfqDetailDTO;
+
+    let whereClause: FilterQuery<TotalRfqDetail> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [
+          { partnerName: { $ilike: `%${search}%` } },
+          { purchaseOrderName: { $ilike: `%${search}%` } },
+        ],
+      };
+    }
+
+    if (state) {
+      whereClause = {
+        ...whereClause,
+        state: { $eq: state },
+      };
+    }
+
+    const totalRfqDetail = await this.em.find(
+      TotalRfqDetail,
+      { ...whereClause },
+      {
+        offset: (Number(page) - 1) * Number(limit),
+        limit,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+      },
+    );
+
+    const count = await this.em.find(TotalRfqDetail, {});
+
+    return {
+      data: totalRfqDetail,
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
+    };
+  }
+
+  public async getTotalDonePurchaseOrdersDetail(
+    totalDonePurchaseOrdersDetailDTO: TotalDonePurchaseOrderDetailDTO,
+  ): Promise<PaginationResponse<TotalDonePurchaseOrder>> {
+    const {
+      limit = 10,
+      page = 1,
+      sortBy = 'purchaseOrderName',
+      sortOrder = SortOrder.ASC,
+      search,
+      state,
+    } = totalDonePurchaseOrdersDetailDTO;
+
+    let whereClause: FilterQuery<TotalDonePurchaseOrder> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [
+          { partnerName: { $ilike: `%${search}%` } },
+          { purchaseOrderName: { $ilike: `%${search}%` } },
+        ],
+      };
+    }
+
+    if (state) {
+      whereClause = {
+        ...whereClause,
+        state: { $eq: state },
+      };
+    }
+
+    const totalDonePurchaseOrdersDetail = await this.em.find(
+      TotalDonePurchaseOrder,
+      { ...whereClause },
+      {
+        offset: (Number(page) - 1) * Number(limit),
+        limit,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+      },
+    );
+
+    const count = await this.em.find(TotalDonePurchaseOrder, {});
+
+    return {
+      data: totalDonePurchaseOrdersDetail,
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
+    };
+  }
+
+  public async getTotalToApproveDetail(
+    totalApproveDetailDTO: TotalToApproveDetailDTO,
+  ): Promise<PaginationResponse<TotalToApproveDetail>> {
+    const {
+      limit = 10,
+      page = 1,
+      sortBy = 'purchaseOrderName',
+      sortOrder = SortOrder.ASC,
+      search,
+      state,
+    } = totalApproveDetailDTO;
+
+    let whereClause: FilterQuery<TotalToApproveDetail> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [
+          { partnerName: { $ilike: `%${search}%` } },
+          { purchaseOrderName: { $ilike: `%${search}%` } },
+        ],
+      };
+    }
+
+    if (state) {
+      whereClause = {
+        ...whereClause,
+        state: { $eq: state },
+      };
+    }
+
+    const totalToApproveDetail = await this.em.find(
+      TotalToApproveDetail,
+      { ...whereClause },
+      {
+        offset: (Number(page) - 1) * Number(limit),
+        limit,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+      },
+    );
+
+    const count = await this.em.find(TotalToApproveDetail, {});
+
+    return {
+      data: totalToApproveDetail,
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
+    };
   }
 }
