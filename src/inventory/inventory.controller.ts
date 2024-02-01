@@ -28,8 +28,8 @@ export class InventoryController {
   }
 
   @Get('/current-stocks')
-  async getCurrentStock(@Query() query: CurrentStockDTO) {
-    const currentStock = await this.inventoryService.getCurrentStock(query);
+  async getCurrentStocks() {
+    const currentStock = await this.inventoryService.getCurrentStocks();
 
     return currentStock;
   }
@@ -67,6 +67,14 @@ export class InventoryController {
     const totalValues = await this.inventoryService.getPendingReceipts();
 
     return totalValues;
+  }
+
+  @Get('/current-stocks-detail')
+  async getCurrentStocksDetail(@Query() query: CurrentStockDTO) {
+    const currentStock =
+      await this.inventoryService.getCurrentStocksDetail(query);
+
+    return currentStock;
   }
 
   @Get('/total-products-detail')

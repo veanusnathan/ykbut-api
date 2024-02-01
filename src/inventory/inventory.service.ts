@@ -94,7 +94,20 @@ export class InventoryService {
     return parsedTotalProduct[0];
   }
 
-  public async getCurrentStock(
+  public async getCurrentStocks(): Promise<{ currentStocks: number }> {
+    const currentStocks = await this.em.find(CurrentStock, {});
+
+    const totalItemSum = currentStocks.reduce(
+      (accumulator, currentValue) => accumulator + Number(currentValue.sum),
+      0,
+    );
+
+    return {
+      currentStocks: totalItemSum,
+    };
+  }
+
+  public async getCurrentStocksDetail(
     currentStockDTO: CurrentStockDTO,
   ): Promise<PaginationResponse<CurrentStock>> {
     const {
