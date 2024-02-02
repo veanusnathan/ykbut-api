@@ -116,6 +116,7 @@ export class InventoryService {
       sortBy = 'name',
       sortOrder = SortOrder.ASC,
       search,
+      code,
     } = currentStockDTO;
 
     let whereClause: FilterQuery<CurrentStock> = {};
@@ -123,10 +124,14 @@ export class InventoryService {
     if (search) {
       whereClause = {
         ...whereClause,
-        $or: [
-          { name: { $ilike: `%${search}%` } },
-          { defaultCode: { $ilike: `%${search}%` } },
-        ],
+        name: { $ilike: `%${search}%` },
+      };
+    }
+
+    if (code) {
+      whereClause = {
+        ...whereClause,
+        defaultCode: { $ilike: `%${code}%` },
       };
     }
 
@@ -168,7 +173,7 @@ export class InventoryService {
     const whereClause: FilterQuery<TotalVariant> = {};
 
     if (search) {
-      whereClause.name = { $ilike: `${search}` };
+      whereClause.name = { $ilike: `%${search}%` };
     }
 
     const totalVariant = await this.em.find(

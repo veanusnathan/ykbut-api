@@ -9,6 +9,10 @@ export class CurrentStockDTO extends PaginationQueryParams {
 
   @IsString()
   @IsOptional()
+  readonly code?: string;
+
+  @IsString()
+  @IsOptional()
   readonly sortBy: string;
 
   @IsEnum(SortOrder)
