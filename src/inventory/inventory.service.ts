@@ -354,13 +354,11 @@ export class InventoryService {
     } = totalInventoryValueDetailDTO;
 
     let whereClause: FilterQuery<TotalInventoryValueDetail> = {};
+
     if (search) {
       whereClause = {
         ...whereClause,
-        $or: [
-          { productName: { $ilike: `%${search}%` } },
-          { uomName: { $ilike: `%${search}%` } },
-        ],
+        $or: [{ productName: { $ilike: `%${search}%` } }],
       };
     }
 
