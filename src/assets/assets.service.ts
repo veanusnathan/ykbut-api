@@ -13,7 +13,7 @@ import {
   TotalAssetList,
   TotalEquipmentList,
 } from './assets.entity';
-import { PaginationResponse } from '~/pagination/types';
+import { PaginationResponse, SortOrder } from '~/pagination/types';
 import { GeneralDTO } from './dtos/general.dto';
 
 @Injectable()
@@ -59,7 +59,7 @@ export class AssetsService {
       PurchaseOrderList,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
       },
     );
@@ -105,7 +105,7 @@ export class AssetsService {
       PurchaseRequestList,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
       },
     );
@@ -151,7 +151,7 @@ export class AssetsService {
       PurchaseReceivedList,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
       },
     );
@@ -180,7 +180,7 @@ export class AssetsService {
       TotalEquipmentList,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
       },
     );
@@ -209,7 +209,7 @@ export class AssetsService {
       TotalAssetList,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
       },
     );
@@ -238,7 +238,7 @@ export class AssetsService {
       TotalAssetList,
       { ...whereClause, state: 'open' },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
       },
     );
@@ -267,7 +267,7 @@ export class AssetsService {
       TotalAssetList,
       { ...whereClause, state: 'close' },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
       },
     );
@@ -296,7 +296,7 @@ export class AssetsService {
       TotalAssetList,
       { ...whereClause, state: 'draft' },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
       },
     );
@@ -310,7 +310,13 @@ export class AssetsService {
   public async getScrapProductList(
     runningDepreciationListDTO: GeneralDTO,
   ): Promise<PaginationResponse<ScrapProductList>> {
-    const { limit = 10, page = 1, search } = runningDepreciationListDTO;
+    const {
+      limit = 10,
+      page = 1,
+      search,
+      sortBy = 'name',
+      sortOrder = SortOrder.ASC,
+    } = runningDepreciationListDTO;
 
     let whereClause: FilterQuery<ScrapProductList> = {};
 
@@ -325,8 +331,11 @@ export class AssetsService {
       ScrapProductList,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
       },
     );
 
@@ -364,7 +373,7 @@ export class AssetsService {
   //     QuantityPerCategory,
   //     { ...whereClause },
   //     {
-  //       offset: (page - 1) * limit,
+  //       offset: (Number(page) - 1) * Number(limit),
   //       limit,
   //       orderBy: {
   //         [sortBy]: sortOrder,
@@ -496,7 +505,13 @@ export class AssetsService {
   public async getListItemDepresiation(
     quantityPerCategoryDTO: GeneralDTO,
   ): Promise<PaginationResponse<ListItemDepreciation>> {
-    const { limit = 10, page = 1, search } = quantityPerCategoryDTO;
+    const {
+      limit = 10,
+      page = 1,
+      sortBy = 'name',
+      sortOrder = SortOrder.ASC,
+      search,
+    } = quantityPerCategoryDTO;
 
     let whereClause: FilterQuery<ListItemDepreciation> = {};
 
@@ -511,8 +526,11 @@ export class AssetsService {
       ListItemDepreciation,
       { ...whereClause },
       {
-        offset: (page - 1) * limit,
+        offset: (Number(page) - 1) * Number(limit),
         limit,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
       },
     );
 
