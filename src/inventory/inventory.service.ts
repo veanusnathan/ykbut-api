@@ -9,6 +9,7 @@ import {
   TotalInventoryValueDetail,
   PendingTransferDetail,
   PendingReceiptDetail,
+  TotalProductPerCategory,
 } from './inventory.entity';
 import { StockOpnameDTO } from './dtos/stock-opname.dto';
 import { PaginationResponse, SortOrder } from '~/pagination/types';
@@ -514,5 +515,16 @@ export class InventoryService {
         count.length,
       ),
     };
+  }
+
+  public async getTotalProductPerCategory(): Promise<
+    { count: string; type: string }[]
+  > {
+    const totalProductPerCategory = await this.em.find(
+      TotalProductPerCategory,
+      {},
+    );
+
+    return totalProductPerCategory;
   }
 }

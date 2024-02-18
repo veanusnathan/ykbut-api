@@ -158,3 +158,14 @@ export class PendingReceiptDetail {
   @Property()
   state!: string;
 }
+
+@Entity({
+  expression: 'SELECT count(id), type FROM product_template GROUP BY type',
+})
+export class TotalProductPerCategory {
+  @Property()
+  count!: string;
+
+  @Property()
+  type!: string;
+}

@@ -110,4 +110,12 @@ export class InventoryController {
 
     return totalProducts;
   }
+
+  @Get('/product-per-category')
+  async getTotalProductPerCategory() {
+    const totalProducts =
+      await this.inventoryService.getTotalProductPerCategory();
+
+    return totalProducts;
+  }
 }
