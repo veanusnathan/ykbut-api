@@ -3,10 +3,10 @@ version: '3.9'
 services:
   postgres:
     image: postgres:13
-    container_name: ybkut-postgres
+    container_name: ykbut-postgres
     ports:
       - 5432:5432
     environment:
-      POSTGRES_USER: ybkut
+      POSTGRES_USER: ykbut
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: ybkut-db
+      POSTGRES_DB: ykbut-db
