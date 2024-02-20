@@ -4,9 +4,9 @@ import { defineConfig } from '@mikro-orm/postgresql';
 export default defineConfig({
   host: 'localhost',
   port: 5432,
-  user: 'ybkut',
+  user: 'ykbut',
   password: 'admin',
-  dbName: 'ybkut-db',
+  dbName: 'ykbut-db',
   entities: ['./dist/**/*.entity.js', './dist/*.entity.js'],
   entitiesTs: ['./src/**/*.entity.ts', './src/*.entity.ts'],
   metadataProvider: TsMorphMetadataProvider,
