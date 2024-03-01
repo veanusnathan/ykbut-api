@@ -6,7 +6,7 @@ export default defineConfig({
   port: 5432,
   user: 'ykbut',
   password: 'admin',
-  dbName: 'ykbut-db',
+  dbName: 'ykbutdb',
   entities: ['./dist/**/*.entity.js', './dist/*.entity.js'],
   entitiesTs: ['./src/**/*.entity.ts', './src/*.entity.ts'],
   metadataProvider: TsMorphMetadataProvider,
