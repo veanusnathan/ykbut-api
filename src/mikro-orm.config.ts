@@ -2,9 +2,9 @@ import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { defineConfig } from '@mikro-orm/postgresql';
 
 export default defineConfig({
-  host: 'localhost',
+  host: 'lama2dingin.id',
   port: 5432,
-  user: 'ykbut',
+  user: 'ykbutdb',
   password: 'admin',
   dbName: 'ykbutdb',
   entities: ['./dist/**/*.entity.js', './dist/*.entity.js'],
