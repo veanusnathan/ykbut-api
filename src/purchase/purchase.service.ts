@@ -3,7 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { ConnectionService } from '~/connection/connection.service';
 import { PaginationService } from '~/pagination/pagination.service';
 import {
+  AverageOrderValuePerYear,
+  NominalPurchaseOrderAsset,
   TotalDonePurchaseOrder,
+  TotalPendingPODetail,
+  TotalPendingPRDetail,
+  TotalPendingReceiveDetail,
   TotalPurchaseOrderDetail,
   TotalRfqDetail,
   TotalToApproveDetail,
@@ -13,6 +18,9 @@ import { PaginationResponse, SortOrder } from '~/pagination/types';
 import { TotalRfqDetailDTO } from './dtos/total-rfq-detail.dto';
 import { TotalDonePurchaseOrderDetailDTO } from './dtos/total-done-purchase-order-detail.dto';
 import { TotalToApproveDetailDTO } from './dtos/total-to-approve-detail.dto';
+import { TotalPendingPRDetailDTO } from './dtos/total-pending-pr-detail';
+import { TotalPendingPODetailDTO } from './dtos/total-pending-po-detail';
+import { TotalPendingReceiveDetailDTO } from './dtos/total-pending-receive-detail';
 
 @Injectable()
 export class PurchaseService {
@@ -50,6 +58,57 @@ export class PurchaseService {
         sum: Number(sum),
       };
     });
+
+    return parsedTotalRFQ[0];
+  }
+
+  public async getTotalPendingPR(): Promise<{ count: number }> {
+    const totalPendingPR = await this.connectionService.getConnection({
+      rawQuery:
+        "select count(pr.id) from purchase_request pr where request_type='replacement' and state in ('draft','to_approve')",
+    });
+
+    const parsedTotalRFQ = totalPendingPR.map(
+      ({ count }: { count: string }) => {
+        return {
+          count: Number(count),
+        };
+      },
+    );
+
+    return parsedTotalRFQ[0];
+  }
+
+  public async getTotalPendingReceive(): Promise<{ count: number }> {
+    const totalPendingRecieve = await this.connectionService.getConnection({
+      rawQuery:
+        "select count(sp.id) from stock_picking sp where state not in ('cancel','done')",
+    });
+
+    const parsedTotalRFQ = totalPendingRecieve.map(
+      ({ count }: { count: string }) => {
+        return {
+          count: Number(count),
+        };
+      },
+    );
+
+    return parsedTotalRFQ[0];
+  }
+
+  public async getTotalPendingPO(): Promise<{ count: number }> {
+    const totalPendingPO = await this.connectionService.getConnection({
+      rawQuery:
+        "select count(po.id) from purchase_order po where state not in ('purchase','done')",
+    });
+
+    const parsedTotalRFQ = totalPendingPO.map(
+      ({ count }: { count: string }) => {
+        return {
+          count: Number(count),
+        };
+      },
+    );
 
     return parsedTotalRFQ[0];
   }
@@ -104,6 +163,75 @@ export class PurchaseService {
     return parsedToApprovePurchase[0];
   }
 
+  public async getNominalPurchaseOrderAsset(): Promise<
+    NominalPurchaseOrderAsset[]
+  > {
+    const nominalPurchaseOrderAssets = await this.em.find(
+      NominalPurchaseOrderAsset,
+      {},
+    );
+
+    return nominalPurchaseOrderAssets;
+  }
+
+  public async getYearAverageValue(): Promise<AverageOrderValuePerYear[]> {
+    const yearAverageValue = await this.em.find(AverageOrderValuePerYear, {});
+
+    return yearAverageValue;
+  }
+
+  public async getTotalPendingReceiveDetail(
+    totalPendingReceiveDetailDTO: TotalPendingReceiveDetailDTO,
+  ): Promise<PaginationResponse<TotalPendingReceiveDetail>> {
+    const {
+      limit = 10,
+      page = 1,
+      sortBy = 'name',
+      sortOrder = SortOrder.ASC,
+      search,
+      state,
+    } = totalPendingReceiveDetailDTO;
+
+    let whereClause: FilterQuery<TotalPendingReceiveDetail> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [{ name: { $ilike: `%${search}%` } }],
+      };
+    }
+
+    if (state) {
+      whereClause = {
+        ...whereClause,
+        state: { $eq: state },
+      };
+    }
+
+    const totalPendingReceiveDetail = await this.em.find(
+      TotalPendingReceiveDetail,
+      { ...whereClause },
+      {
+        offset: (Number(page) - 1) * Number(limit),
+        limit,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+      },
+    );
+
+    const count = await this.em.find(TotalPendingReceiveDetail, {});
+
+    return {
+      data: totalPendingReceiveDetail,
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
+    };
+  }
+
   public async getTotalPurchasesOrderDetail(
     totalPurchaseOrderDetailDTO: TotalPurchaseOrderDetailDTO,
   ): Promise<PaginationResponse<TotalPurchaseOrderDetail>> {
@@ -151,6 +279,113 @@ export class PurchaseService {
 
     return {
       data: totalPurchaseOrderDetail,
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
+    };
+  }
+
+  public async getTotalPendingPRDetail(
+    totalPendingPRDetailDTO: TotalPendingPRDetailDTO,
+  ): Promise<PaginationResponse<TotalPendingPRDetail>> {
+    const {
+      limit = 10,
+      page = 1,
+      sortBy = 'name',
+      sortOrder = SortOrder.ASC,
+      search,
+      state,
+    } = totalPendingPRDetailDTO;
+
+    let whereClause: FilterQuery<TotalPendingPRDetail> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [{ name: { $ilike: `%${search}%` } }],
+      };
+    }
+
+    if (state) {
+      whereClause = {
+        ...whereClause,
+        state: { $eq: state },
+      };
+    }
+
+    const totalPendingPRDetail = await this.em.find(
+      TotalPendingPRDetail,
+      { ...whereClause },
+      {
+        offset: (Number(page) - 1) * Number(limit),
+        limit,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+      },
+    );
+
+    const count = await this.em.find(TotalPendingPRDetail, {});
+
+    return {
+      data: totalPendingPRDetail,
+      meta: this.paginationService.generateMeta(
+        Number(page),
+        Number(limit),
+        count.length,
+      ),
+    };
+  }
+
+  public async getTotalPendingPODetail(
+    totalPendingPODetailDTO: TotalPendingPODetailDTO,
+  ): Promise<PaginationResponse<TotalPendingPODetail>> {
+    const {
+      limit = 10,
+      page = 1,
+      sortBy = 'name',
+      sortOrder = SortOrder.ASC,
+      search,
+      state,
+    } = totalPendingPODetailDTO;
+
+    let whereClause: FilterQuery<TotalPendingPODetail> = {};
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        $or: [
+          { partnerName: { $ilike: `%${search}%` } },
+          { purchaseOrderName: { $ilike: `%${search}%` } },
+        ],
+      };
+    }
+
+    if (state) {
+      whereClause = {
+        ...whereClause,
+        state: { $eq: state },
+      };
+    }
+
+    const totalPendingPODetail = await this.em.find(
+      TotalPendingPODetail,
+      { ...whereClause },
+      {
+        offset: (Number(page) - 1) * Number(limit),
+        limit,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+      },
+    );
+
+    const count = await this.em.find(TotalPendingPODetail, {});
+
+    return {
+      data: totalPendingPODetail,
       meta: this.paginationService.generateMeta(
         Number(page),
         Number(limit),

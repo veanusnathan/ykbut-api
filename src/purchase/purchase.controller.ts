@@ -3,10 +3,69 @@ import { PurchaseService } from './purchase.service';
 import { TotalInventoryValueDetailDTO } from '~/inventory/dtos/total-inventory-value-detail.dto';
 import { TotalDonePurchaseOrderDetailDTO } from './dtos/total-done-purchase-order-detail.dto';
 import { TotalToApproveDetailDTO } from './dtos/total-to-approve-detail.dto';
+import { TotalPendingPRDetailDTO } from './dtos/total-pending-pr-detail';
+import { TotalPurchaseOrderDetailDTO } from './dtos/total-purchase-order-detail.dto';
+import { TotalPendingReceiveDetailDTO } from './dtos/total-pending-receive-detail';
 
 @Controller('/purchase')
 export class PurchaseController {
   constructor(private readonly purchaseService: PurchaseService) {}
+
+  @Get('/year-average-value')
+  async getAverageOrderValuePerYear() {
+    const yearAverageValue = await this.purchaseService.getYearAverageValue();
+
+    return yearAverageValue;
+  }
+
+  @Get('/nominal-order-asset')
+  async getNominalPurchaseOrderAsset() {
+    const nominalOrderAsset =
+      await this.purchaseService.getNominalPurchaseOrderAsset();
+
+    return nominalOrderAsset;
+  }
+
+  @Get('/total-pending-receive')
+  async getTotalPendingReceive() {
+    const totalPendingReceive =
+      await this.purchaseService.getTotalPendingReceive();
+
+    return totalPendingReceive;
+  }
+
+  @Get('/total-pending-receive-detail')
+  async getTotalPendingReceiveDetail(
+    @Query() query: TotalPendingReceiveDetailDTO,
+  ) {
+    const totalPendingPO =
+      await this.purchaseService.getTotalPendingReceiveDetail(query);
+
+    return totalPendingPO;
+  }
+
+  @Get('/total-pending-po-detail')
+  async getTotalPendingPODetail(@Query() query: TotalPurchaseOrderDetailDTO) {
+    const totalPendingPR =
+      await this.purchaseService.getTotalPurchasesOrderDetail(query);
+
+    return totalPendingPR;
+  }
+
+  @Get('/total-pending-pr')
+  async getTotalPendingPR() {
+    const totalPendingPR = await this.purchaseService.getTotalPendingPR();
+
+    return totalPendingPR;
+  }
+
+  @Get('/total-pending-pr-detail')
+  async getTotalPendingPRDetail(@Query() query: TotalPendingPRDetailDTO) {
+    const totalPendingPR =
+      await this.purchaseService.getTotalPendingPRDetail(query);
+
+    return totalPendingPR;
+  }
 
   @Get('/total-amount-orders')
   async getTotalAmountPurchaseOrders() {
