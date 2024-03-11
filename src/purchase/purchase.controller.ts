@@ -4,8 +4,8 @@ import { TotalInventoryValueDetailDTO } from '~/inventory/dtos/total-inventory-v
 import { TotalDonePurchaseOrderDetailDTO } from './dtos/total-done-purchase-order-detail.dto';
 import { TotalToApproveDetailDTO } from './dtos/total-to-approve-detail.dto';
 import { TotalPendingPRDetailDTO } from './dtos/total-pending-pr-detail';
-import { TotalPurchaseOrderDetailDTO } from './dtos/total-purchase-order-detail.dto';
 import { TotalPendingReceiveDetailDTO } from './dtos/total-pending-receive-detail';
+import { TotalPendingPODetailDTO } from './dtos/total-pending-po-detail';
 
 @Controller('/purchase')
 export class PurchaseController {
@@ -44,12 +44,19 @@ export class PurchaseController {
     return totalPendingPO;
   }
 
-  @Get('/total-pending-po-detail')
-  async getTotalPendingPODetail(@Query() query: TotalPurchaseOrderDetailDTO) {
-    const totalPendingPR =
-      await this.purchaseService.getTotalPurchasesOrderDetail(query);
+  @Get('/total-pending-po')
+  async getTotalPendingPO() {
+    const totalPendingPR = await this.purchaseService.getTotalPendingPO();
 
     return totalPendingPR;
+  }
+
+  @Get('/total-pending-po-detail')
+  async getTotalPendingPODetail(@Query() query: TotalPendingPODetailDTO) {
+    const totalPendingPODetail =
+      await this.purchaseService.getTotalPendingPODetail(query);
+
+    return totalPendingPODetail;
   }
 
   @Get('/total-pending-pr')
@@ -61,10 +68,10 @@ export class PurchaseController {
 
   @Get('/total-pending-pr-detail')
   async getTotalPendingPRDetail(@Query() query: TotalPendingPRDetailDTO) {
-    const totalPendingPR =
+    const totalPendingPRDetail =
       await this.purchaseService.getTotalPendingPRDetail(query);
 
-    return totalPendingPR;
+    return totalPendingPRDetail;
   }
 
   @Get('/total-amount-orders')

@@ -345,7 +345,7 @@ export class PurchaseService {
     const {
       limit = 10,
       page = 1,
-      sortBy = 'name',
+      sortBy = 'purchaseOrderName',
       sortOrder = SortOrder.ASC,
       search,
       state,
