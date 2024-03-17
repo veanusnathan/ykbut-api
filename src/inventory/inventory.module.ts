@@ -9,6 +9,7 @@ import {
   TotalInventoryValueDetail,
   PendingReceiptDetail,
   PendingTransferDetail,
+  TotalProductPerCategory,
 } from './inventory.entity';
 import { InventoryService } from './inventory.service';
 import { InventoryController } from './inventory.controller';
@@ -27,6 +28,7 @@ import { ConnectionModule } from '~/connection/connection.module';
         TotalInventoryValueDetail,
         PendingReceiptDetail,
         PendingTransferDetail,
+        TotalProductPerCategory,
       ],
     }),
     PaginationModule,
