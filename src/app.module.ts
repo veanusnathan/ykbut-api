@@ -15,6 +15,7 @@ import { SchoolModule } from './school/school.module';
 import { AcademicModule } from './academic/academic.module';
 import { LoggerMiddleware } from './logger.middleware';
 import { DayCareModule } from './daycare/daycare.module';
+import { AccountingModule } from './accounting/accounting.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { DayCareModule } from './daycare/daycare.module';
     SchoolModule,
     AcademicModule,
     DayCareModule,
+    AccountingModule,
   ],
 })
 export class AppModule implements NestModule, OnModuleInit {
