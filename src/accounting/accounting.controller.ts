@@ -7,6 +7,12 @@ import { GetGpActual } from './dtos/get-gp-actual.dto';
 import { GetGpOperationUnit } from './dtos/get-gp-operation-unit.dto';
 import { GetRevenuePerUnit } from './dtos/get-revenue-per-unit.dto';
 import { GetRevenueYtd } from './dtos/get-revenue-ytd.dto';
+import { GetOpexPlan } from './dtos/get-opex-plan.dto';
+import { GetOpexActual } from './dtos/get-opex-actual.dto';
+import { GetOprPlan } from './dtos/get-opr-plan.dto';
+import { GetOprActual } from './dtos/get-opr-actual.dto';
+import { GetArAging } from './dtos/get-ar-aging.dto';
+import { GetProfitability } from './dtos/get-profiltability.dto';
 
 @Controller('/accounting')
 export class AccountingController {
@@ -40,6 +46,34 @@ export class AccountingController {
     return result;
   }
 
+  @Get('/opex-plan')
+  async getOpexPlan(@Query() query: GetOpexPlan) {
+    const result = await this.accountingService.getOpexPlan(query);
+
+    return result;
+  }
+
+  @Get('/opex-actual')
+  async getOpexActual(@Query() query: GetOpexActual) {
+    const result = await this.accountingService.getOpexActual(query);
+
+    return result;
+  }
+
+  @Get('/opr-plan')
+  async getOprPlan(@Query() query: GetOprPlan) {
+    const result = await this.accountingService.getOprPlan(query);
+
+    return result;
+  }
+
+  @Get('/opr-actual')
+  async getOprActual(@Query() query: GetOprActual) {
+    const result = await this.accountingService.getOprActual(query);
+
+    return result;
+  }
+
   @Get('/gp-operation-unit')
   async getGpOperationUnit(@Query() query: GetGpOperationUnit) {
     const result = await this.accountingService.getGpOperationUnit(query);
@@ -64,6 +98,13 @@ export class AccountingController {
   @Get('/revenue-ar-aging')
   async getArAging() {
     const result = await this.accountingService.getArAging();
+
+    return result;
+  }
+
+  @Get('/profitability')
+  async getProfitability(@Query() query: GetProfitability) {
+    const result = await this.accountingService.getProfitability(query);
 
     return result;
   }

@@ -1,6 +1,6 @@
 import { IsDateString, IsOptional } from 'class-validator';
 
-export class GetArAging {
+export class GetProfitability {
   @IsOptional()
   @IsDateString()
   readonly startDate?: string;
