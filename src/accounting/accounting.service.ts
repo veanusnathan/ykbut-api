@@ -8,6 +8,7 @@ import {
   startOfDay,
   endOfDay,
   addMonths,
+  format,
 } from 'date-fns';
 import { ConnectionService } from '~/connection/connection.service';
 import { GetRevenuePlan } from './dtos/get-revenue-plan.dto';
@@ -490,33 +491,43 @@ export class AccountingService {
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
 
-    const firstDateOfYear = startOfYear(
-      new Date(currentYear, 0, 1),
-    ).toISOString();
-
-    const lastDateOfYear = endOfYear(
-      new Date(currentYear, 11, 31),
-    ).toISOString();
-
-    const firstDateOfMonth = startOfMonth(new Date(currentYear, currentMonth));
-    const lastDateOfMonth = endOfMonth(new Date(currentYear, currentMonth));
-
-    const firstDateOfMonthISO = startOfDay(firstDateOfMonth).toISOString();
-    const lastDateOfMonthISO = endOfDay(lastDateOfMonth).toISOString();
-
-    const firstDateOfPreviousMonth = startOfMonth(
-      addMonths(new Date(currentYear, currentMonth), -1),
-    );
-    const lastDateOfPreviousMonth = endOfMonth(
-      addMonths(new Date(currentYear, currentMonth), -1),
+    const firstDateOfYear = format(
+      startOfYear(new Date(currentYear, 0, 1)),
+      'yyyy-MM-dd',
     );
 
-    const firstDateOfPreviousMonthISO = startOfDay(
-      firstDateOfPreviousMonth,
-    ).toISOString();
-    const lastDateOfPreviousMonthISO = endOfDay(
-      lastDateOfPreviousMonth,
-    ).toISOString();
+    const lastDateOfYear = format(
+      endOfYear(new Date(currentYear, 11, 31)),
+      'yyyy-MM-dd',
+    );
+
+    const firstDateOfMonth = format(
+      startOfMonth(new Date(currentYear, currentMonth)),
+      'yyyy-MM-dd',
+    );
+    const lastDateOfMonth = format(
+      endOfMonth(new Date(currentYear, currentMonth)),
+      'yyyy-MM-dd',
+    );
+
+    // const firstDateOfMonthISO = startOfDay(firstDateOfMonth).toISOString();
+    // const lastDateOfMonthISO = endOfDay(lastDateOfMonth).toISOString();
+
+    const firstDateOfPreviousMonth = format(
+      startOfMonth(addMonths(new Date(currentYear, currentMonth), -1)),
+      'yyyy-MM-dd',
+    );
+    const lastDateOfPreviousMonth = format(
+      endOfMonth(addMonths(new Date(currentYear, currentMonth), -1)),
+      'yyyy-MM-dd',
+    );
+
+    // const firstDateOfPreviousMonthISO = startOfDay(
+    //   firstDateOfPreviousMonth,
+    // ).toISOString();
+    // const lastDateOfPreviousMonthISO = endOfDay(
+    //   lastDateOfPreviousMonth,
+    // ).toISOString();
 
     if (
       endDatePastMonth &&
@@ -535,55 +546,54 @@ export class AccountingService {
     } else {
       queryEarlyDateYear = firstDateOfYear;
       queryEndDateYear = lastDateOfYear;
-      queryEarlyDateThisMonth = firstDateOfMonthISO;
-      queryEndDateThisMonth = lastDateOfMonthISO;
-      queryEarlyDatePastMonth = firstDateOfPreviousMonthISO;
-      queryEndDatePastMonth = lastDateOfPreviousMonthISO;
+      queryEarlyDateThisMonth = firstDateOfMonth;
+      queryEndDateThisMonth = lastDateOfMonth;
+      queryEarlyDatePastMonth = firstDateOfPreviousMonth;
+      queryEndDatePastMonth = lastDateOfPreviousMonth;
     }
 
     const queryResult = await this.connectionService.getConnection({
       rawQuery: `SELECT COALESCE(plan_query.unit, revenue_query.unit, last_month_query.unit) AS unit,
       COALESCE(last_month_query.last_month, 0) AS last_month,
       COALESCE(plan_query.plan, 0) AS plan,
-      COALESCE(revenue_query.revenue, 0) AS revenue
-        FROM
-        (SELECT g.name AS unit,
-                SUM(planned_amount) AS plan
-        FROM crossovered_budget_lines AS a
-        JOIN crossovered_budget AS b ON a.crossovered_budget_id = b.id
-        JOIN account_budget_post AS c ON a.general_budget_id = c.id
-        JOIN account_budget_rel AS d ON c.id = d.budget_id
-        JOIN account_account AS e ON d.account_id = e.id
-        JOIN account_account_type AS f ON e.user_type_id = f.id
-        JOIN account_analytic_account AS g ON a.analytic_account_id = g.id
-        WHERE b.state = 'confirm'
-            AND a.date_from = '${queryEarlyDateYear}'
-            AND a.date_to = '${queryEndDateYear}'
-            AND f.id IN (13, 72, 99)
-        GROUP BY g.name) AS plan_query
-        FULL OUTER JOIN
-        (SELECT d.name AS unit,
-                SUM(balance) AS revenue
-        FROM account_move_line AS a
-        JOIN account_account AS b ON a.account_id = b.id
-        JOIN account_account_type AS c ON b.user_type_id = c.id
-        JOIN account_analytic_account AS d ON a.analytic_account_id = d.id
-        WHERE parent_state = 'posted'
-            AND date BETWEEN '${queryEarlyDateThisMonth}' AND '${queryEndDateThisMonth}'
-            AND c.id IN (13, 72, 99)
-        GROUP BY d.name) AS revenue_query ON plan_query.unit = revenue_query.unit
-        FULL OUTER JOIN
-        (SELECT d.name AS unit,
-                SUM(balance) AS last_month
-        FROM account_move_line AS a
-        JOIN account_account AS b ON a.account_id = b.id
-        JOIN account_account_type AS c ON b.user_type_id = c.id
-        JOIN account_analytic_account AS d ON a.analytic_account_id = d.id
-        WHERE parent_state = 'posted'
-            AND date BETWEEN '${queryEarlyDatePastMonth}' AND '${queryEndDatePastMonth}'
-            AND c.id IN (13, 72, 99)
-        GROUP BY d.name) AS last_month_query ON plan_query.unit = last_month_query.unit;
-      `,
+      COALESCE(revenue_query.revenue, 0) AS actual
+FROM
+ (SELECT g.name AS unit,
+         SUM(planned_amount) AS plan
+  FROM crossovered_budget_lines AS a
+  JOIN crossovered_budget AS b ON a.crossovered_budget_id = b.id
+  JOIN account_budget_post AS c ON a.general_budget_id = c.id
+  JOIN account_budget_rel AS d ON c.id = d.budget_id
+  JOIN account_account AS e ON d.account_id = e.id
+  JOIN account_account_type AS f ON e.user_type_id = f.id
+  JOIN account_analytic_account AS g ON a.analytic_account_id = g.id
+  WHERE b.state = 'confirm'
+    AND a.date_from = '${firstDateOfYear}'
+    AND a.date_to = '${lastDateOfYear}'
+    AND f.id IN (13, 72, 99)
+  GROUP BY g.name) AS plan_query
+FULL OUTER JOIN
+ (SELECT d.name AS unit,
+         SUM(balance) AS revenue
+  FROM account_move_line AS a
+  JOIN account_account AS b ON a.account_id = b.id
+  JOIN account_account_type AS c ON b.user_type_id = c.id
+  JOIN account_analytic_account AS d ON a.analytic_account_id = d.id
+  WHERE parent_state = 'posted'
+    AND date BETWEEN '${firstDateOfMonth}' AND '${lastDateOfMonth}'
+    AND c.id IN (13, 72, 99)
+  GROUP BY d.name) AS revenue_query ON plan_query.unit = revenue_query.unit
+FULL OUTER JOIN
+ (SELECT d.name AS unit,
+         SUM(balance) AS last_month
+  FROM account_move_line AS a
+  JOIN account_account AS b ON a.account_id = b.id
+  JOIN account_account_type AS c ON b.user_type_id = c.id
+  JOIN account_analytic_account AS d ON a.analytic_account_id = d.id
+  WHERE parent_state = 'posted'
+    AND date BETWEEN '${firstDateOfPreviousMonth}' AND '${lastDateOfPreviousMonth}'
+    AND c.id IN (13, 72, 99)
+  GROUP BY d.name) AS last_month_query ON plan_query.unit = last_month_query.unit;`,
     });
 
     return queryResult;
