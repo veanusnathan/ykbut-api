@@ -12,6 +12,10 @@ import { GetOpexActual } from './dtos/get-opex-actual.dto';
 import { GetOprPlan } from './dtos/get-opr-plan.dto';
 import { GetOprActual } from './dtos/get-opr-actual.dto';
 import { GetProfitability } from './dtos/get-profiltability.dto';
+import { GetCsrActual } from './dtos/get-csr-actual';
+import { GetCrsPlan } from './dtos/get-csr-plan';
+import { GetPnlPlan } from './dtos/get-pnl-plan.dto';
+import { GetPnlActual } from './dtos/get-pln-actual.dto';
 
 @Controller('/accounting')
 export class AccountingController {
@@ -41,6 +45,41 @@ export class AccountingController {
   @Get('/gp-actual')
   async getGpActual(@Query() query: GetGpActual) {
     const result = await this.accountingService.getGpActual(query);
+
+    return result;
+  }
+
+  @Get('/csr-actual')
+  async getCsrActual(@Query() query: GetCsrActual) {
+    const result = await this.accountingService.getCsrActual(query);
+
+    return result;
+  }
+
+  @Get('/csr-plan')
+  async getCsrPlan(@Query() query: GetCrsPlan) {
+    const result = await this.accountingService.getCsrPlan(query);
+
+    return result;
+  }
+
+  @Get('/pnl-plan')
+  async getPnlPlan(@Query() query: GetPnlPlan) {
+    const result = await this.accountingService.getPnlPlan(query);
+
+    return result;
+  }
+
+  @Get('/pnl-actual')
+  async getPnlActual(@Query() query: GetPnlActual) {
+    const result = await this.accountingService.getPnlActual(query);
+
+    return result;
+  }
+
+  @Get('/pnl-per-unit')
+  async getPnlPerUnit(@Query() query: GetPnlActual) {
+    const result = await this.accountingService.getPnlActual(query);
 
     return result;
   }
