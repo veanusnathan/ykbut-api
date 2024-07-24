@@ -243,17 +243,21 @@ group by b.name
 order by b.name;`,
       });
 
-    const totalActual = queryResult.reduce(
-      (sum: number, record: QueryResultCsrActual) =>
-        sum + parseFloat(record.actual),
-      0,
-    );
+    // const totalActual = queryResult.reduce(
+    //   (sum: number, record: QueryResultCsrActual) =>
+    //     sum + parseFloat(record.actual),
+    //   0,
+    // );
 
-    const revenue = queryResult.map((record: QueryResultCsrActual) => ({
-      account: record.account,
-      actual:
-        ((parseFloat(record.actual) / totalActual) * 100).toFixed(2) + '%',
-    }));
+    // const revenue = queryResult.map((record: QueryResultCsrActual) => ({
+    //   account: record.account,
+    //   actual:
+    //     ((parseFloat(record.actual) / totalActual) * 100).toFixed(2) + '%',
+    // }));
+
+    const revenue = queryResult;
+
+    return revenue;
 
     return revenue;
   }
@@ -298,15 +302,17 @@ and e.code in ('6400001','6400002','6400003','6400004','6400005','6400099')
 group by e.name`,
       });
 
-    const totalPlan = queryResult.reduce(
-      (sum, record) => sum + parseFloat(record.plan),
-      0,
-    );
+    // const totalPlan = queryResult.reduce(
+    //   (sum, record) => sum + parseFloat(record.plan),
+    //   0,
+    // );
 
-    const revenue = queryResult.map((record) => ({
-      account: record.account,
-      plan: ((parseFloat(record.plan) / totalPlan) * 100).toFixed(2) + '%',
-    }));
+    // const revenue = queryResult.map((record) => ({
+    //   account: record.account,
+    //   plan: ((parseFloat(record.plan) / totalPlan) * 100).toFixed(2) + '%',
+    // }));
+
+    const revenue = queryResult;
 
     return revenue;
   }
