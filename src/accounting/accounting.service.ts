@@ -27,6 +27,7 @@ import { GetCsrActual } from './dtos/get-csr-actual';
 import { GetCrsPlan } from './dtos/get-csr-plan';
 import { GetPnlPlan } from './dtos/get-pnl-plan.dto';
 import { GetPnlActual } from './dtos/get-pln-actual.dto';
+import { QueryResultCsrActual, QueryResultCsrPlan } from './types';
 
 @Injectable()
 export class AccountingService {
@@ -230,8 +231,9 @@ export class AccountingService {
       queryEndDate = lastDateOfYear;
     }
 
-    const queryResult = await this.connectionService.getConnection({
-      rawQuery: `select b.name as account, coalesce(sum(a.balance), 0) as actual
+    const queryResult: QueryResultCsrActual[] =
+      await this.connectionService.getConnection({
+        rawQuery: `select b.name as account, coalesce(sum(a.balance), 0) as actual
 from account_account as b left join account_move_line as a on a.account_id = b.id 
 and a.parent_state = 'posted'
 and a.date between '${queryEarlyDate}' and '${queryEndDate}'
@@ -239,9 +241,19 @@ join account_account_type as c on b.user_type_id = c.id
 where b.code in ('6400001','6400002','6400003','6400004','6400005','6400099')
 group by b.name
 order by b.name;`,
-    });
+      });
 
-    const revenue = queryResult[0];
+    const totalActual = queryResult.reduce(
+      (sum: number, record: QueryResultCsrActual) =>
+        sum + parseFloat(record.actual),
+      0,
+    );
+
+    const revenue = queryResult.map((record: QueryResultCsrActual) => ({
+      account: record.account,
+      actual:
+        ((parseFloat(record.actual) / totalActual) * 100).toFixed(2) + '%',
+    }));
 
     return revenue;
   }
@@ -270,8 +282,9 @@ order by b.name;`,
       queryEndDate = lastDateOfYear;
     }
 
-    const queryResult = await this.connectionService.getConnection({
-      rawQuery: `select e.name as account, sum(planned_amount)	as plan
+    const queryResult: QueryResultCsrPlan[] =
+      await this.connectionService.getConnection({
+        rawQuery: `select e.name as account, sum(planned_amount)	as plan
 from crossovered_budget_lines as a
 join crossovered_budget as b on a.crossovered_budget_id = b.id
 join account_budget_post as c on a.general_budget_id = c.id
@@ -283,9 +296,17 @@ and a.date_from between '${queryEarlyDate}' and '${queryEndDate}'
 and a.date_to between '${queryEarlyDate}' and '${queryEndDate}'
 and e.code in ('6400001','6400002','6400003','6400004','6400005','6400099')
 group by e.name`,
-    });
+      });
 
-    const revenue = queryResult[0];
+    const totalPlan = queryResult.reduce(
+      (sum, record) => sum + parseFloat(record.plan),
+      0,
+    );
+
+    const revenue = queryResult.map((record) => ({
+      account: record.account,
+      plan: ((parseFloat(record.plan) / totalPlan) * 100).toFixed(2) + '%',
+    }));
 
     return revenue;
   }
@@ -475,7 +496,7 @@ actual_pnl AS (
     JOIN account_account_type AS c ON b.user_type_id = c.id
     JOIN account_analytic_account AS d ON a.analytic_account_id = d.id
     WHERE parent_state = 'posted'
-      AND date BETWEEN '${queryEarlyDate}' AND '${queryEndDate}
+      AND date BETWEEN '${queryEarlyDate}' AND '${queryEndDate}'
     GROUP BY d.name
 )
 SELECT 
@@ -492,7 +513,7 @@ FULL OUTER JOIN actual_pnl a ON p.unit = a.unit
 ORDER BY unit;`,
     });
 
-    const revenue = queryResult[0];
+    const revenue = queryResult;
 
     return revenue;
   }

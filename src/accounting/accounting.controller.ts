@@ -78,8 +78,8 @@ export class AccountingController {
   }
 
   @Get('/pnl-per-unit')
-  async getPnlPerUnit(@Query() query: GetPnlActual) {
-    const result = await this.accountingService.getPnlActual(query);
+  async getPnlPerUnit(@Query() query: GetPnlPlan) {
+    const result = await this.accountingService.getPnlPerUnit(query);
 
     return result;
   }
